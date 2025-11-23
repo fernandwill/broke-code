@@ -31,20 +31,21 @@ export const buildHttpContext = ({ req }: { req: Request }): Context => {
   if (!auth || !auth.startsWith("Bearer ")) {
     return {};
   }
-  
+
   const user = verifyToken(auth.slice(7));
   return user ? { user } : {};
 };
 
 // 5. WebSocket Context Builder (for graphql-ws)
 export const buildWsContext = (connectionParams: Readonly<Record<string, unknown>> | undefined): Context => {
-    // connectionParams keys can sometimes be lowercase/uppercase depending on the client
-    const auth = (connectionParams?.authorization || connectionParams?.Authorization) as string | undefined;
+  // connectionParams keys can sometimes be lowercase/uppercase depending on the client
+  const auth = (connectionParams?.authorization || connectionParams?.Authorization) as string | undefined;
 
-    if (!auth || !auth.startsWith("Bearer ")) {
-        return {};
-    }
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return {};
+  }
 
-    const user = verifyToken(auth.slice(7));
-    return user ? { user } : {};
+  const user = verifyToken(auth.slice(7));
+  return user ? { user } : {};
 }
+

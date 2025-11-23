@@ -1,7 +1,7 @@
 import "dotenv/config";
 import http from "http";
 import cors from "cors";
-import express, {Request} from "express"; // Request/Response types inferred via buildHttpContext
+import express, { Request } from "express";
 import { json } from "body-parser";
 import { ApolloServer } from "@apollo/server";
 import { WebSocketServer } from "ws";
@@ -11,11 +11,12 @@ import { useServer } from "graphql-ws/use/ws";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 // Import your types and helpers
-import { typeDefs, resolvers } from "./schema";
-import { 
-    Context, 
-    buildHttpContext, 
-    buildWsContext 
+import { typeDefs } from "./schema";
+import { resolvers } from "./resolvers";
+import {
+    Context,
+    buildHttpContext,
+    buildWsContext
 } from "./context";
 
 const PORT = process.env.PORT || 4000;
@@ -27,9 +28,9 @@ const httpServer = http.createServer(app);
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 // Setup WebSocket Server
-const wsServer = new WebSocketServer({ 
-    server: httpServer, 
-    path: "/graphql" 
+const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/graphql"
 });
 
 const serverCleanup = useServer(
@@ -70,8 +71,8 @@ app.use(
     json(),
     expressMiddleware(server, {
         // REFACTORED: Use the shared helper from context.tsx
-        context: async ({ req }: {req: Request}) => {
-            return buildHttpContext({req});
+        context: async ({ req }: { req: Request }) => {
+            return buildHttpContext({ req });
         }
     })
 );
