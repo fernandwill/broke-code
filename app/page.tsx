@@ -1,6 +1,11 @@
+"use client";
 import Head from "next/head";
+import {useAuthModal} from "@/store/useAuthModal";
+import AuthModal from "@/components/modals/AuthModal";
 
 export default function Home() {
+  const {isOpen, open, close, view, setView} = useAuthModal();
+  
   return (
     <>
     <Head>
@@ -11,7 +16,10 @@ export default function Home() {
     </Head>
 
     <main>
-      <h1>Hello sekai</h1>
+      <button onClick={() => {setView("login"); open();}}>Open auth</button>
+      {isOpen && (
+        <AuthModal view={view} onClose={close} onChangeView={setView} />
+      )}
     </main>
     </>
   )

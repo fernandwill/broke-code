@@ -1,14 +1,18 @@
 import React from "react";
-import { IoClose } from "react-icons/io5";
+import {IoClose} from "react-icons/io5";
 import LoginPage from "./LoginPage";
 import Signup from "./Signup";
 import ResetPassword from "./ResetPassword";
+import {AuthView} from "@/store/useAuthModal";
 
 type AuthModalProps = {
-
+    view: AuthView;
+    onClose: () => void;
+    onChangeView: (view:AuthView) => void;    
 };
 
-const AuthModal: React.FC<AuthModalProps> = () => {
+const AuthModal: React.FC<AuthModalProps> = ({view, onClose,onChangeView}) => {
+
     return (
         <>
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/60"></div>
@@ -19,11 +23,12 @@ const AuthModal: React.FC<AuthModalProps> = () => {
 					        <button
 						        type="button"
 						        className="bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-800 hover:text-white text-white"
+                                onClick={onClose}
 					        >
 						    <IoClose className="h-5 w-5" />
 					        </button>
 				        </div>
-                        <ResetPassword />
+                        {view === "login" ? <LoginPage onChangeView={onChangeView} /> : view === "signup" ? <Signup onChangeView={onChangeView} /> : <ResetPassword />}
 			        </div>
 		        </div>
 	        </div>

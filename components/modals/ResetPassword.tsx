@@ -1,10 +1,11 @@
 import React from "react";
+import {AuthView} from "@/store/useAuthModal";
 
 type ResetPasswordProps = {
 
 }
 
-const ResetPassword: React.FC<ResetPasswordProps> = () => {
+const ResetPassword: React.FC<ResetPasswordProps> = ({}) => {
     return (
         <form className="space-y-6 px-6 lg:px-8 pb-4 sm:pb-6 xl:pb-8">
             <h3 className="text-xl font-medium text-white">Reset Password</h3>

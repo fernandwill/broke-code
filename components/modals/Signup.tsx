@@ -1,10 +1,11 @@
 import React from "react";
+import {AuthView} from "@/store/useAuthModal";
 
 type SignupProps = {
-
+    onChangeView: (view: AuthView) => void;
 }
 
-const Signup: React.FC<SignupProps> = () => {
+const Signup: React.FC<SignupProps> = ({onChangeView}) => {
     return (
         <form className="space-y-6 px-6 py-4">
         <h3 className="text-xl font-medium text-white">Sign-up to LeetClone</h3>
@@ -26,7 +27,7 @@ const Signup: React.FC<SignupProps> = () => {
         </div>
         <button type="submit" className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#FF7A00] hover:bg-[#E86A00] transition duration-500 ease-in-out">Register</button>
         <div className="text-sm font-medium text-gray-500">Already have an account? {" "}
-            <a href="#" className="text-blue-700 hover:underline">Login</a>
+            <a href="#" className="text-blue-700 hover:underline" onClick={() => onChangeView("login")}>Login</a>
         </div>
         
     </form>
