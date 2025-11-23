@@ -9,7 +9,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             <img src="/logo.png" alt="LeetClone" className="h-full" />
         </Link>
         <div className="flex-items-center">
-            <button className="bg-[#FF7A00] text-white font-semibold py-2 px-4 rounded-full mr-4 border-2 border-transparent hover:text-[#FF7A00] hover:bg-white hover:border-2 hover:border-[#FF7A00]transition duration-500 ease-in-out">Sign in</button>
+            <button className="bg-[#FF7A00] text-white font-semibold py-2 px-4 rounded-full mr-4 border-2 border-transparent hover:text-[#FF7A00] hover:bg-white hover:border-2 hover:border-[#FF7A00] transition duration-500 ease-in-out">Sign in</button>
         </div>
     </div>;
 }
