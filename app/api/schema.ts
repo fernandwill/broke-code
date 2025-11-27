@@ -14,7 +14,7 @@ export const typeDefs = gql`
     }
 
     type Mutation {
-        createUser(email: String!, name: String!): User!
+        createUser(email: String!, name: String!, password: String!): User!
     }
 
     type Subscription {

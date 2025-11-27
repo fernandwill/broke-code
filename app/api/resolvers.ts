@@ -1,5 +1,9 @@
 import { query } from "../db/db";
 import { Context } from "./context";
+import bcrypt from "bcrypt";
+
+const bcryptSaltRounds = 10;
+
 
 export const resolvers = {
     Query: {
@@ -25,12 +29,20 @@ export const resolvers = {
     },
 
     Mutation: {
-        createUser: async (_: unknown, { email, name }: { email: string, name: string }) => {
-            const result = await query(
-                "INSERT INTO users (email, name) VALUES ($1, $2) RETURNING *",
-                [email, name]
-            );
-            return result.rows[0];
+        createUser: async (_: unknown, { email, name, password }: { email: string, name: string, password: string }) => {
+            try { 
+                const hashedPassword = await bcrypt.hash(password, bcryptSaltRounds);
+                const result = await query(
+                    "INSERT INTO users (email, name, password_hash) VALUES ($1, $2, $3) RETURNING id, email, name",
+                    [email, name, hashedPassword]
+                );
+                return result.rows[0];
+            } catch (err: any) {
+                if (err?.code === "23505") {
+                    throw new Error("User already exists.");
+                }
+                throw new Error(err.message ?? "Registration failed.");
+            }
         }
     },
 
