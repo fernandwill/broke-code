@@ -9,15 +9,13 @@ import { expressMiddleware } from "@as-integrations/express4";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { useServer } from "graphql-ws/use/ws";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-
-// Import your types and helpers
-import { typeDefs } from "./schema";
-import { resolvers } from "./resolvers";
+import { typeDefs } from "./schema.js";
+import { resolvers } from "./resolvers.js";
 import {
     Context,
     buildHttpContext,
     buildWsContext
-} from "./context";
+} from "./context.js";
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -36,16 +34,13 @@ const wsServer = new WebSocketServer({
 const serverCleanup = useServer(
     {
         schema,
-        // REFACTORED: Use the shared helper from context.tsx
-        context: async (ctx) => {
+        context: async (ctx: {connectionParams?: Readonly<Record<string, unknown>>}) => {
             return buildWsContext(ctx.connectionParams);
         }
     },
     wsServer
 );
 
-// Setup Apollo Server
-// REFACTORED: Pass the strict 'Context' type here
 const server = new ApolloServer<Context>({
     schema,
     plugins: [
@@ -62,19 +57,20 @@ const server = new ApolloServer<Context>({
     ],
 });
 
-await server.start();
+async function start() {
+    await server.start();
+    app.get("/health", (_req, res) => res.send("ok"));
+    app.use(
+        "/graphql",
+        json(),
+        expressMiddleware(server, {context: async ({req}: {req: Request}) => buildHttpContext({req})})
+    );
+    httpServer.listen(PORT, () => console.log(`HTTP/WS on ${PORT}`));
+}
 
-app.get("/health", (_req, res) => res.send("ok"));
+start().catch((err) => {
+    console.error("Failed to start server", err);
+    process.exit(1);
+});
 
-app.use(
-    "/graphql",
-    json(),
-    expressMiddleware(server, {
-        // REFACTORED: Use the shared helper from context.tsx
-        context: async ({ req }: { req: Request }) => {
-            return buildHttpContext({ req });
-        }
-    })
-);
-
-httpServer.listen(PORT, () => console.log(`HTTP/WS on ${PORT}`));
+// start with npx tsx app/api/server.ts

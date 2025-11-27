@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {AuthView} from "@/store/useAuthModal";
 
 type SignupProps = {
@@ -6,12 +6,24 @@ type SignupProps = {
 }
 
 const Signup: React.FC<SignupProps> = ({onChangeView}) => {
+    const [inputs, setInputs] = useState({email: "", displayName: "", password: ""}); 
+
+    const handleChangeInput = (e:React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((prev) => ({...prev, [e.target.name]: e.target.value}));
+    };
+
+    const handleRegister = (e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(inputs);
+    };
+    console.log(inputs);
+
     return (
-        <form className="space-y-6 px-6 py-4">
+        <form className="space-y-6 px-6 py-4" onSubmit={handleRegister}>
         <h3 className="text-xl font-medium text-white">Sign-up to LeetClone</h3>
         <div>
             <label htmlFor="email" className="text-sm font-medium block mb-2 text-gray-300">Your Email</label>
-            <input type="email" name="email" id="email" className="border-2 outline-none sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white" placeholder="your@email.com"></input>
+            <input type="email" name="email" id="email" className="border-2 outline-none sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white" placeholder="your@email.com" onChange={handleChangeInput}></input>
         </div>
          <div>
             <label htmlFor="displayName" className="text-sm font-medium block mb-2 text-gray-300">Your Display Name</label>
