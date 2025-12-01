@@ -1,6 +1,7 @@
 import { query } from "../db/db";
 import { Context } from "./context";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const bcryptSaltRounds = 10;
 
@@ -42,6 +43,26 @@ export const resolvers = {
                     throw new Error("User already exists.");
                 }
                 throw new Error(err.message ?? "Registration failed.");
+            }
+        },
+
+        userLogin: async (_: unknown, {email, password}: {email: string; password: string}) => {
+            try {
+                const result = await query(
+                    "SELECT id, email, name, password_hash FROM users WHERE email = $1",
+                    [email]
+                );
+                const user = result.rows[0];
+                if (!user) throw new Error("Invalid email or password.");
+
+                const passwordValid = await bcrypt.compare(password, user.password_hash);
+                if (!passwordValid) throw new Error("Invalid email or password.");
+
+                const jwtToken = jwt.sign({sub: user.id, email: user.email}, process.env.JWT_SECRET as string, {expiresIn: "7d"}
+                );
+                return {jwtToken, user: {id: user.id, email: user.email, name: user.name}};
+            } catch (err: any) {
+                throw new Error(err?.message ?? "Login failed.");
             }
         }
     },

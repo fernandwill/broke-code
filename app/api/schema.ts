@@ -6,6 +6,11 @@ export const typeDefs = gql`
         email: String!
         name: String
     }
+    
+    type AuthPayload {
+        user: User!
+        jwtToken: String!
+    }
 
     type Query {
         health: String!
@@ -15,6 +20,7 @@ export const typeDefs = gql`
 
     type Mutation {
         createUser(email: String!, name: String!, password: String!): User!
+        userLogin(email: String!, password: String!): AuthPayload!
     }
 
     type Subscription {

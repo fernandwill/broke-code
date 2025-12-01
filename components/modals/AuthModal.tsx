@@ -23,6 +23,7 @@ const AuthModal: React.FC<AuthModalProps> = ({view, onClose,onChangeView}) => {
 					        <button
 						        type="button"
 						        className="bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-800 hover:text-white text-white"
+								onClick={onClose}
 					        >
 						    <IoClose className="h-5 w-5" />
 					        </button>
