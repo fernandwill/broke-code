@@ -62,7 +62,8 @@ export const resolvers = {
                 );
                 return {jwtToken, user: {id: user.id, email: user.email, name: user.name}};
             } catch (err: any) {
-                throw new Error(err?.message ?? "Login failed.");
+                console.error("userLogin error", err);
+                throw new Error(err?.message?.trim() || "Login failed.");
             }
         }
     },

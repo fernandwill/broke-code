@@ -1,6 +1,8 @@
+"use client";
 import React, {useState} from "react";
 import {AuthView} from "@/store/useAuthModal";
 import {graphqlRequest} from "@/app/lib/graphqlClient";
+import {useRouter} from "next/navigation";
 
 type LoginPageProps = {
     onChangeView: (view: AuthView) => void;
@@ -23,6 +25,8 @@ const userLogin = `mutation UserLogin($email: String!, $password: String!) {
 const LoginPage: React.FC<LoginPageProps> = ({onChangeView}) => {
     const [inputs, setInputs] = useState({email: "", password: ""});
 
+    const router = useRouter();
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => setInputs((prev) => ({
@@ -38,16 +42,17 @@ const LoginPage: React.FC<LoginPageProps> = ({onChangeView}) => {
         try {
             const {data, errors} = await graphqlRequest<UserLoginResponse>(userLogin, {email: inputs.email, password: inputs.password});
 
-        if (errors?.length) throw new Error(errors[0].message);
-        if (!data?.userLogin) throw new Error("No data returned.");
+            if (errors?.length) throw new Error(errors[0].message);
+            if (!data?.userLogin) throw new Error("No data returned.");
 
-        localStorage.setItem("token", data.userLogin.jwtToken);
-        onChangeView("reset");
-        } catch (err: unknown) {    
+            localStorage.setItem("token", data.userLogin.jwtToken);
+            onChangeView("reset");
+            } catch (err: unknown) {    
+            
             const errMessage = err instanceof Error ? err.message : "Login failed.";
             alert(errMessage);
-        } finally {
-          setIsLoading(false);
+            } finally {
+            setIsLoading(false);
         }
     };
 
@@ -62,13 +67,12 @@ const LoginPage: React.FC<LoginPageProps> = ({onChangeView}) => {
             <input type="password" name="password" id="password" className="border-2 outline-none sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white" placeholder="************" onChange={handleChangeInput} value={inputs.password}></input>
         </div>
         <button type="submit" className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#FF7A00] hover:bg-[#E86A00] transition duration-500 ease-in-out" disabled={isLoading}>{isLoading ? "Logging in..." : "Login"}</button>
-        <button type="button" className="flex w-full justify-end" onClick={() => onChangeView("reset")}>
+        <button type="button" className="flex w-full justify-end" onClick={() => router.push("/")}>
             <a href="#" className="text-sm block text-[#FF7A00] hover:underline w-full text-right">Forgot Password</a>
         </button>
         <div className="text-sm font-medium text-gray-500">Not Registered? {" "}
             <a href="#" className="text-blue-700 hover:underline" onClick={() => onChangeView("signup")}>Create account</a>
         </div>
-        
     </form>
 }
 
