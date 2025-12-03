@@ -16,16 +16,28 @@ export function useGraphqlAuth() {
     const [user, setUser] = useState<MeResponse["me"]>(null);
     const [loading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [token, setToken] = useState(() => (typeof window !== "undefined" ? localStorage.getItem("token"): null));
+
+    useEffect(() => {
+        const handler = () => setToken(localStorage.getItem("token"));
+        window.addEventListener("storage", handler);
+        window.addEventListener("auth-token-changed", handler);
+        return () => {
+            window.removeEventListener("storage", handler);
+            window.removeEventListener("auth-token-changed", handler);
+        };
+    }, []);
 
     useEffect(() => {
     let cancelled = false;
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!token) {
         setUser(null);
         setIsLoading(false);
         return () => {cancelled = true; };
     }
+
+    setIsLoading(true);
 
     const fetchMe = async () => {
         try {
@@ -45,11 +57,10 @@ export function useGraphqlAuth() {
             if (!cancelled) setIsLoading(false);
         }
     };
-
         fetchMe();
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [token]);
     return {user, loading, error};
 }

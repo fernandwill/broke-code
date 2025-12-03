@@ -4,6 +4,7 @@ import {useAuthModal} from "@/store/useAuthModal";
 import AuthModal from "@/components/modals/AuthModal";
 import Topbar from "@/components/Topbar";
 import ProblemTable from "@/components/ProblemTable";
+import {ToastContainer} from "react-toastify";
 
 export default function Home() {
   const {isOpen, open, close, view, setView} = useAuthModal();
@@ -50,6 +51,7 @@ export default function Home() {
         <AuthModal view={view} onClose={close} onChangeView={setView} />
       )}
     </main>
+    <ToastContainer position="top-right" autoClose={3000} theme="dark" />
     </>
   )
 }

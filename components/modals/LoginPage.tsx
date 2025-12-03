@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import { AuthView } from "@/store/useAuthModal";
 import { graphqlRequest } from "@/app/lib/graphqlClient";
+import {toast} from "react-toastify";
 
 type LoginPageProps = {
     onChangeView: (view: AuthView) => void;
+    onClose: () => void;
 };
 
 type UserLoginResponse = {
@@ -22,7 +24,7 @@ const userLogin = `mutation UserLogin($email: String!, $password: String!) {
   }
 }`;
 
-const LoginPage: React.FC<LoginPageProps> = ({ onChangeView }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onChangeView, onClose }) => {
     const [inputs, setInputs] = useState({ email: "", password: "" });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +46,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onChangeView }) => {
             if (!data?.userLogin) throw new Error("No data returned.");
 
             localStorage.setItem("token", data.userLogin.jwtToken);
-            onChangeView("reset");
+            window.dispatchEvent(new Event("auth-token-changed"));
+            toast.success("Signed in successfully.");
+            onClose();
         } catch (err: unknown) {
 
             const errMessage = err instanceof Error ? err.message : "Login failed.";

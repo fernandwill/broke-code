@@ -28,7 +28,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ view, onClose, onChangeView }) =>
 								<IoClose className="h-5 w-5" />
 							</button>
 						</div>
-						{view === "login" ? <LoginPage onChangeView={onChangeView} /> : view === "signup" ? <Signup onChangeView={onChangeView} /> : view === "reset" ? <ResetPassword /> : null}
+						{view === "login" ? <LoginPage onChangeView={onChangeView} onClose={onClose} /> : view === "signup" ? <Signup onChangeView={onChangeView} /> : view === "reset" ? <ResetPassword /> : null}
 					</div>
 				</div>
 			</div>
