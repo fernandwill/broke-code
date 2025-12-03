@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 type DBerror = {code?: string; message?: string};
 
-const isDBError = (err: unknown): err is DBerror {
+const isDBError = (err: unknown): err is DBerror => {
     return typeof err === "object" && err !== null;
 }
 
