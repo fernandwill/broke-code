@@ -15,16 +15,13 @@ export const resolvers = {
     Query: {
         health: () => "ok",
         users: async () => {
-            // 1. Write standard SQL
             const result = await query("SELECT * FROM users");
-            // 2. Return the rows directly
             return result.rows;
         },
 
         me: async (_parent: unknown, _args: unknown, context: Context) => {
-            if (!context.user) throw new Error("Not authenticated");
+            if (!context.user) throw new Error("Not authenticated.");
 
-            // Parameterized query ($1) prevents SQL injection
             const result = await query(
                 "SELECT * FROM users WHERE id = $1",
                 [context.user.sub]
