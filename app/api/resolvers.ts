@@ -3,8 +3,13 @@ import { Context } from "./context";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const bcryptSaltRounds = 10;
+type DBerror = {code?: string; message?: string};
 
+const isDBError = (err: unknown): err is DBerror {
+    return typeof err === "object" && err !== null;
+}
+
+const bcryptSaltRounds = 10;
 
 export const resolvers = {
     Query: {
@@ -38,11 +43,12 @@ export const resolvers = {
                     [email, name, hashedPassword]
                 );
                 return result.rows[0];
-            } catch (err: any) {
-                if (err?.code === "23505") {
+            } catch (err: unknown) {
+                if (isDBError(err) && err.code === "23505") {
                     throw new Error("User already exists.");
                 }
-                throw new Error(err.message ?? "Registration failed.");
+                const message = err instanceof Error ? err.message : "Registration failed.";
+                throw new Error(message);
             }
         },
 
@@ -61,9 +67,9 @@ export const resolvers = {
                 const jwtToken = jwt.sign({sub: user.id, email: user.email}, process.env.JWT_SECRET as string, {expiresIn: "7d"}
                 );
                 return {jwtToken, user: {id: user.id, email: user.email, name: user.name}};
-            } catch (err: any) {
-                console.error("userLogin error", err);
-                throw new Error(err?.message?.trim() || "Login failed.");
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message.trim() : "Login failed.";
+                throw new Error(message);
             }
         }
     },
