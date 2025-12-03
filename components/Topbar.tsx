@@ -1,14 +1,18 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import {useGraphqlAuth} from "@/app/lib/graphqlAuth";
 import Logout from "@/components/Logout";
+import {useAuthModal} from "@/store/useAuthModal";
 
 type TopbarProps = {
 
 };
 
 const Topbar:React.FC<TopbarProps> = () => {
-    const {user, loading, error} = useGraphqlAuth(); 
+    const {user, loading, error} = useGraphqlAuth();
+	const {open, setView} = useAuthModal();
+	const handleClick = () => {setView("login"); open(); }; 
 
     return (
         <nav className="relative flex h-[50px] w-full shrink-0 items-center px-5 bg-[#282828] text-[#B3B3B3]">
@@ -29,9 +33,7 @@ const Topbar:React.FC<TopbarProps> = () => {
 						</a>
 					</div>
                     {!user && (
-					<Link href="/auth">
-						<button className="bg-[#FFFFFF1A] py-1 px-2 cursor-pointer rounded">Sign In</button>
-					</Link>
+						<button className="bg-[#FFFFFF1A] py-1 px-2 cursor-pointer rounded" onClick={handleClick}>Sign In</button>
                     )}
                     {user && (
                         <div className="cursor-pointer group relative">

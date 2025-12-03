@@ -1,14 +1,14 @@
 "use client";
-import React, {useState} from "react";
-import {AuthView} from "@/store/useAuthModal";
-import {graphqlRequest} from "@/app/lib/graphqlClient";
-import {useRouter} from "next/navigation";
+import React, { useState } from "react";
+import { AuthView } from "@/store/useAuthModal";
+import { graphqlRequest } from "@/app/lib/graphqlClient";
 
 type LoginPageProps = {
     onChangeView: (view: AuthView) => void;
 };
 
-type UserLoginResponse = {userLogin: {jwtToken: string; user: {id: string; email: string; name?: string | null}};
+type UserLoginResponse = {
+    userLogin: { jwtToken: string; user: { id: string; email: string; name?: string | null } };
 };
 
 const userLogin = `mutation UserLogin($email: String!, $password: String!) {
@@ -22,10 +22,8 @@ const userLogin = `mutation UserLogin($email: String!, $password: String!) {
   }
 }`;
 
-const LoginPage: React.FC<LoginPageProps> = ({onChangeView}) => {
-    const [inputs, setInputs] = useState({email: "", password: ""});
-
-    const router = useRouter();
+const LoginPage: React.FC<LoginPageProps> = ({ onChangeView }) => {
+    const [inputs, setInputs] = useState({ email: "", password: "" });
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -35,43 +33,41 @@ const LoginPage: React.FC<LoginPageProps> = ({onChangeView}) => {
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!inputs.email || !inputs.password) {alert("All fields are required."); return;}
+        if (!inputs.email || !inputs.password) { alert("All fields are required."); return; }
 
-            setIsLoading(true);
+        setIsLoading(true);
 
         try {
-            const {data, errors} = await graphqlRequest<UserLoginResponse>(userLogin, {email: inputs.email, password: inputs.password});
+            const { data, errors } = await graphqlRequest<UserLoginResponse>(userLogin, { email: inputs.email, password: inputs.password });
 
             if (errors?.length) throw new Error(errors[0].message);
             if (!data?.userLogin) throw new Error("No data returned.");
 
             localStorage.setItem("token", data.userLogin.jwtToken);
             onChangeView("reset");
-            } catch (err: unknown) {    
-            
+        } catch (err: unknown) {
+
             const errMessage = err instanceof Error ? err.message : "Login failed.";
             alert(errMessage);
-            } finally {
+        } finally {
             setIsLoading(false);
         }
     };
 
     return <form className="space-y-6 px-6 py-4" onSubmit={handleLogin}>
-        <h3 className="text-xl font-medium text-white">Sign in to LeetClone</h3>
+        <h3 className="text-xl font-medium text-white">Sign In to LeetClone</h3>
         <div>
             <label htmlFor="email" className="text-sm font-medium block mb-2 text-gray-300">Your Email</label>
             <input type="email" name="email" id="email" className="border-2 outline-none sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white" placeholder="your@email.com" onChange={handleChangeInput} value={inputs.email}></input>
         </div>
-         <div>
+        <div>
             <label htmlFor="password" className="text-sm font-medium block mb-2 text-gray-300">Your Password</label>
             <input type="password" name="password" id="password" className="border-2 outline-none sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white" placeholder="************" onChange={handleChangeInput} value={inputs.password}></input>
         </div>
-        <button type="submit" className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#FF7A00] hover:bg-[#E86A00] transition duration-500 ease-in-out" disabled={isLoading}>{isLoading ? "Logging in..." : "Login"}</button>
-        <button type="button" className="flex w-full justify-end" onClick={() => router.push("/")}>
-            <a href="#" className="text-sm block text-[#FF7A00] hover:underline w-full text-right">Forgot Password</a>
-        </button>
+        <button type="submit" className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#FF7A00] hover:bg-[#E86A00] transition duration-500 ease-in-out" disabled={isLoading}>{isLoading ? "Signing in..." : "Sign In"}</button>
+        <button type="button" className="text-sm block text-[#FF7A00] hover:underline w-full text-right cursor-pointer" onClick={() => onChangeView("reset")}>Forgot Password</button>
         <div className="text-sm font-medium text-gray-500">Not Registered? {" "}
-            <a href="#" className="text-blue-700 hover:underline" onClick={() => onChangeView("signup")}>Create account</a>
+            <button type="button" className="text-blue-700 hover:underline cursor-pointer" onClick={() => onChangeView("signup")}>Create account</button>
         </div>
     </form>
 }
