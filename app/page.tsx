@@ -19,7 +19,7 @@ export default function Home() {
     </Head>
 
     <main className="bg-[#1A1A1A] min-h-screen">
-      <Topbar />
+      <Topbar problemPage/>
         <h1 className="text-2xl text-center text-gray-700 dark:text-gray-400 font-medium uppercase mt-10 mb-5">WE ALL GO INSANE DOWN HERE</h1>
 
           <div className="relative overflow-x-auto mx-auto px-6 pb-10">
