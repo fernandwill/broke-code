@@ -35,7 +35,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onChangeView, onClose }) => {
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!inputs.email || !inputs.password) { toast.error("All fields are required."); return; }
+        if (!inputs.email || !inputs.password) { toast.error("All fields are required.", {position: "top-center", autoClose: 3000, theme: "dark"}); return; }
 
         setIsLoading(true);
 

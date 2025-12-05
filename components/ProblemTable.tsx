@@ -32,7 +32,7 @@ const ProblemTable: React.FC<ProblemTableProps> = () => {
                         <BsCheckCircle fontSize={"18"} width="18" />
                     </th>
                         <td className="px-6 py-4">
-                        <Link className="hover:text-blue-600 cursor-pointer" href={`/problem/${doc.id}`}>{doc.title}</Link>
+                        <Link className="hover:text-blue-600 cursor-pointer" href={`/problems/${doc.id}`}>{doc.title}</Link>
                         </td>
                         <td className={`px-6 py-4 ${diffColor}`}>{doc.difficulty}</td>
                         <td className={"px-6 py-4"}>{doc.category}</td>
