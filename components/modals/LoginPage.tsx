@@ -47,7 +47,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onChangeView, onClose }) => {
 
             localStorage.setItem("token", data.userLogin.jwtToken);
             window.dispatchEvent(new Event("auth-token-changed"));
-            toast.success("Signed in successfully.");
+            toast.success("Signed in successfully.", {autoClose: 3000, theme: "dark"});
             onClose();
         } catch (err: unknown) {
 

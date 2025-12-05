@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {AuthView} from "@/store/useAuthModal";
 import {graphqlRequest} from "@/app/lib/graphqlClient";
+import {toast} from "react-toastify";
 
 type SignupProps = {
     onChangeView: (view: AuthView) => void;
@@ -27,17 +28,17 @@ const Signup: React.FC<SignupProps> = ({onChangeView}) => {
     const handleRegister = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!inputs.email || !inputs.displayName || !inputs.password || !inputs.confirmPassword) {
-            alert("All fields are required.");
+            toast.warn("All fields are required.", {position: "top-center", autoClose: 3000, theme: "dark"});
             return;
         }
 
         if (inputs.password !== inputs.confirmPassword) {
-            alert("Passwords do not match.");
+            toast.error("Passwords do not match.", {position: "top-center", autoClose: 3000, theme: "dark"});
             return;
         }
 
         if (inputs.password.length < 6) {
-            alert("Password must be at least 6 characters long.");
+            toast.warn("Password must be at least 6 characters long.", {position: "top-center", autoClose: 3000, theme: "dark"});
             return;
         }
 
@@ -51,7 +52,7 @@ const Signup: React.FC<SignupProps> = ({onChangeView}) => {
             if (!data?.createUser) throw new Error("No user returned.");
             onChangeView("login");
         } catch (error: any) {
-            alert(error.message ?? "Registration failed.");
+            toast.error(error.message ?? "Registration failed.", {position: "top-center", autoClose: 3000, theme: "dark"});
         } finally {
             setIsLoading(false);
         }
