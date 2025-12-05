@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AuthView } from "@/store/useAuthModal";
 import { graphqlRequest } from "@/app/lib/graphqlClient";
 import {toast} from "react-toastify";
@@ -35,7 +35,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onChangeView, onClose }) => {
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!inputs.email || !inputs.password) { alert("All fields are required."); return; }
+        if (!inputs.email || !inputs.password) { toast.error("All fields are required."); return; }
 
         setIsLoading(true);
 
@@ -52,7 +52,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onChangeView, onClose }) => {
         } catch (err: unknown) {
 
             const errMessage = err instanceof Error ? err.message : "Login failed.";
-            alert(errMessage);
+            toast.error(errMessage, {position: "top-center", autoClose: 3000, theme: "dark"});;
         } finally {
             setIsLoading(false);
         }
