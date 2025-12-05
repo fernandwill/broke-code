@@ -21,3 +21,34 @@
 	height: 8px;
 	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=");
 }
+
+/* Problem Description Styles */
+.example-card {
+	background-color: #3a3a3a;
+	border-radius: 8px;
+	padding: 16px;
+	margin-top: 8px;
+	margin-bottom: 16px;
+}
+
+.example-card pre {
+	color: #e5e5e5;
+	font-size: 14px;
+	line-height: 1.6;
+	margin: 0;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.example-card strong {
+	color: #ffffff;
+}
+
+code {
+	background-color: rgba(255, 255, 255, 0.1);
+	color: #ff7b72;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 0.9em;
+}
