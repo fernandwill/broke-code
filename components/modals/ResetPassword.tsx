@@ -1,5 +1,6 @@
 "use client";
 import React, {useState} from "react";
+import {toast} from "react-toastify";
 
 type ResetPasswordProps = {
 
@@ -18,7 +19,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({}) => {
     const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
-        setMessage("");
         if (!email) {setError("Email is required."); return; }
         setIsLoading(true);
 
@@ -29,7 +29,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({}) => {
                 body: JSON.stringify({email}),
             });
             if (!res.ok) throw new Error("Request failed.");
-            setMessage("If the registered email exists, a reset link has been sent.");
+            toast.success("Password reset email sent.", {position: "top-center", autoClose: 3000, theme:"dark"})
         } catch (err) {
             setError(err instanceof Error ? err.message : "Request failed.");
         } finally {
