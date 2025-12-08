@@ -22,6 +22,27 @@
 	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=");
 }
 
+::-webkit-scrollbar {
+	width: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+	background: #282828;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #4d4d4d;
+}
+
+.cm-scroller,
+.cm-gutters {
+	background-color: #282828 !important;
+}
+
+.cm-focused {
+	outline: none !important; 
+}
+
 /* Problem Description Styles */
 .example-card {
 	background-color: #3a3a3a;
@@ -52,3 +73,6 @@ code {
 	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 	font-size: 0.9em;
 }
+
+
+
