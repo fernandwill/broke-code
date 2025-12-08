@@ -10,12 +10,16 @@ type CodeEditorProps = {
 
 }
 
+const boilerPlate = `const twoSum = (nums, target) => {
+    // Write your code here
+}`;
+
 const CodeEditor: React.FC<CodeEditorProps> = () => {
     return (
         <div className="flex flex-col h-full bg-[#1E1E1E]">
                 <div className="w-full overflow-auto h-full">
                     <CodeMirror
-                        value="const a - 1;"
+                        value={boilerPlate}
                         theme={vscodeDark}
                         extensions={[javascript()]}
                         style={{fontSize: 16}}
