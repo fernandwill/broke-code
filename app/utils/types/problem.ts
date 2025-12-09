@@ -20,6 +20,11 @@ export type Problem<T extends (...args: any[]) => unknown = (...args: unknown[])
 	handlerFunction: Handler<T> | string;
 	starterFunctionName: string;
     difficulty: string;
+	category?: string;
+	likes?: number;
+	dislikes?: number;
+	videoId?: string;
+	link?: string;
 };
 
 export type DBProblem = {

@@ -16,6 +16,8 @@ export const typeDefs = gql`
         health: String!
         users: [User!]!
         me: User
+        problems: [Problem!]!
+        problem(id: ID!): Problem
     }
 
     type Mutation {
@@ -25,5 +27,17 @@ export const typeDefs = gql`
 
     type Subscription {
         ping: String!
+    }
+
+    type Problem {
+    id: ID!
+    title: String!
+    category: String!
+    difficulty: String!
+    likes: Int!
+    dislikes: Int!
+    order: Int!
+    videoId: String
+    link: String
     }
 `;
