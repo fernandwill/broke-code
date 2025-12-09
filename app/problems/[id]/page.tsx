@@ -1,18 +1,20 @@
 import React from "react";
 import Topbar from "@/components/Topbar";
-import Workspace from "@/components/Workspace"
+import Workspace from "@/components/Workspace";
+import {problems} from "@/app/utils/problems";
+import {Problem} from "@/app/utils/types/problem";
 
-type ProblemProps = {
-
+type ProblemPageProps = {
+    problem:Problem;
 };
 
-const Problem:React.FC<ProblemProps> = () => {
+const ProblemPage:React.FC<ProblemPageProps> = ({problem}) => {
     return (
     <div>
         <Topbar problemPage />
-        <Workspace />
+        <Workspace problem={problem}/>
     </div>
     )
 };
 
-export default Problem;
+export default ProblemPage;

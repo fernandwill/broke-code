@@ -1,13 +1,14 @@
+import {Problem} from "@/app/utils/types/problem";
 import React from "react";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { BsCheck2Circle } from "react-icons/bs";
 import { TiStarOutline } from "react-icons/ti";
 
 type ProblemDescriptionProps = {
-
+problem: Problem
 };
 
-const ProblemDescription: React.FC<ProblemDescriptionProps> = () => {
+const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem}) => {
 	return (
 		<div className="bg-[#282828]">
 			{/* TAB */}
@@ -22,13 +23,13 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = () => {
 					{/* Problem heading */}
 					<div className="w-full">
 						<div className="flex space-x-4">
-							<div className="flex-1 mr-2 text-lg text-white font-medium">1. Two Sum</div>
+							<div className="flex-1 mr-2 text-lg text-white font-medium">{problem.title}</div>
 						</div>
 						<div className="flex items-center mt-3">
 							<div
 								className={"text-[#00B8A3] bg-[#00B8A3]/10 inline-block rounded-[21px] px-2.5 py-1 text-xs font-medium capitalize"}
 							>
-								Easy
+								{problem.difficulty}
 							</div>
 							<div className="rounded p-[3px] ml-4 text-lg transition-colors duration-200 text-green-s text-[#2CBB5D]">
 								<BsCheck2Circle />

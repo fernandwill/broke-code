@@ -5,17 +5,18 @@ import ProblemDescription from "@/components/ProblemDescription";
 import PreferenceNav from "@/components/PreferenceNav";
 import CodeEditor from "@/components/CodeEditor";
 import EditorFooter from "@/components/EditorFooter";
+import {Problem} from "@/app/utils/types/problem";
 
 type WorkspaceProps = {
-
-}
+problem: Problem
+};
 
 const Split = dynamic(() => import("react-split"), { ssr: false });
 
-const Workspace: React.FC<WorkspaceProps> = () => {
+const Workspace: React.FC<WorkspaceProps> = ({problem}) => {
     return (
         <Split className="split h-[calc(100vh-50px)]" direction="horizontal" gutterSize={8} minSize={0} gutter={(index, dir) => { const element = document.createElement("div"); element.className = `gutter gutter-${dir}`; return element; }}>
-            <ProblemDescription />
+            <ProblemDescription problem={problem}/>
 
             <div className="flex flex-col h-full relative overflow-x-hidden">
                 <PreferenceNav />
