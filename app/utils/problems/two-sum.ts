@@ -68,7 +68,7 @@ export const twoSum: Problem<TwoSumSolver> = {
     handlerFunction: handlerTwoSum,
     starterCode: starterCodeTwoSum,
     order: 1,
-    difficulty: "Easy",
+    difficulty: "Hard",
     starterFunctionName: "const twoSum",
 }
 

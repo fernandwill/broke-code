@@ -1,20 +1,23 @@
+"use client";
 import React from "react";
+import { useParams, notFound } from "next/navigation";
 import Topbar from "@/components/Topbar";
 import Workspace from "@/components/Workspace";
-import {problems} from "@/app/utils/problems";
-import {Problem} from "@/app/utils/types/problem";
+import { problems } from "@/app/utils/problems";
 
-type ProblemPageProps = {
-    problem:Problem;
-};
+export default function Page() {
+    const params = useParams();
+    const id = params.id as string;
+    const problem = problems[id];
 
-const ProblemPage:React.FC<ProblemPageProps> = ({problem}) => {
+    if (!problem) {
+        notFound();
+    }
+
     return (
-    <div>
-        <Topbar problemPage />
-        <Workspace problem={problem}/>
-    </div>
-    )
-};
-
-export default ProblemPage;
+        <div>
+            <Topbar problemPage />
+            <Workspace problem={problem} />
+        </div>
+    );
+}

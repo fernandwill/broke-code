@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useState} from "react";
 import dynamic from "next/dynamic";
 import ProblemDescription from "@/components/ProblemDescription";
 import PreferenceNav from "@/components/PreferenceNav";
@@ -14,6 +14,8 @@ problem: Problem
 const Split = dynamic(() => import("react-split"), { ssr: false });
 
 const Workspace: React.FC<WorkspaceProps> = ({problem}) => {
+    const [activeTestCaseId, setActiveTestCaseId] = useState<number>(0);
+
     return (
         <Split className="split h-[calc(100vh-50px)]" direction="horizontal" gutterSize={8} minSize={0} gutter={(index, dir) => { const element = document.createElement("div"); element.className = `gutter gutter-${dir}`; return element; }}>
             <ProblemDescription problem={problem}/>
@@ -22,7 +24,7 @@ const Workspace: React.FC<WorkspaceProps> = ({problem}) => {
                 <PreferenceNav />
                 <Split className="split-vertical flex-1" direction="vertical" gutterSize={8} minSize={0} gutter={(index, dir) => { const element = document.createElement("div"); element.className = `gutter gutter-${dir}`; return element; }}>
                     <div className="bg-[#1E1E1E] h-full overflow-auto">
-                        <CodeEditor />
+                        <CodeEditor problem={problem}/>
                     </div>
 
                     <div className="w-full px-5 overflow-auto bg-[#1E1E1E]">
@@ -34,39 +36,26 @@ const Workspace: React.FC<WorkspaceProps> = ({problem}) => {
                         </div>
 
                         <div className="flex">
-                            <div className="mr-2 items-start mt-2 text-white">
+                            {problem.examples.map((example, index) => (
+                            <div className="mr-2 items-start mt-2 text-white" key={example.id} onClick={() => setActiveTestCaseId(index)}>
                                 <div className="flex flex-wrap items-center gap-y-4">
-                                    <div className="font-medium items-center transition-all focus:outline-none inline-flex bg-[#FFFFFF24] hover:bg-[#FFFFFF1A] relative rounded-lg px-4 py-1 cursor-pointer whitespace-nowrap">
-                                    Case 1
+                                    <div className={`font-medium items-center transition-all focus:outline-none inline-flex bg-[#FFFFFF24] hover:bg-[#FFFFFF1A] relative rounded-lg px-4 py-1 cursor-pointer whitespace-nowrap
+                                    ${activeTestCaseId === index ? "text-white" : "text-gray-500"}`}>
+                                    Case {index + 1}
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="mr-2 items-start mt-2 text-white">
-                                <div className="flex flex-wrap items-center gap-y-4">
-                                    <div className="font-medium items-center transition-all focus:outline-none inline-flex bg-[#FFFFFF24] hover:bg-[#FFFFFF1A] relative rounded-lg px-4 py-1 cursor-pointer whitespace-nowrap">
-                                    Case 2
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mr-2 items-start mt-2 text-white">
-                                <div className="flex flex-wrap items-center gap-y-4">
-                                    <div className="font-medium items-center transition-all focus:outline-none inline-flex bg-[#FFFFFF24] hover:bg-[#FFFFFF1A] relative rounded-lg px-4 py-1 cursor-pointer whitespace-nowrap">
-                                    Case 3
-                                    </div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
 
                         <div className="font-semibold my-4">
                             <p className="text-sm font-medium mt-4 text-white">Input:</p>
                             <div className="w-full cursor-text rounded-lg border px-3 py-[10px] bg-[#FFFFFF24] border-transparent text-white mt-2">
-                                nums: [2, 7, 9, 11, 15], target: 9
+                                {problem.examples[activeTestCaseId].inputText}
                             </div>
                             <p className="text-sm font-medium mt-4 text-white">Output:</p>
                             <div className="w-full cursor-text rounded-lg border px-3 py-[10px] bg-[#FFFFFF24] border-transparent text-white mt-2">
-                                [0, 1]
+                                {problem.examples[activeTestCaseId].outputText}
                             </div>
                         </div>
                     </div>
