@@ -23,8 +23,17 @@ export type Problem<T extends (...args: any[]) => unknown = (...args: unknown[])
 	category?: string;
 	likes?: number;
 	dislikes?: number;
+	userState?: ProblemUserState;
 	videoId?: string;
 	link?: string;
+};
+
+export type ProblemUserState = {
+	solved: boolean;
+	attempted: boolean;
+	bookmarked: boolean;
+	liked: boolean;
+	disliked: boolean;
 };
 
 export type DBProblem = {
@@ -37,4 +46,5 @@ export type DBProblem = {
 	order: number;
 	videoId?: string;
 	link?: string;
+	userState?: ProblemUserState;
 };

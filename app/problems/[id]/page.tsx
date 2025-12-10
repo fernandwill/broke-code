@@ -1,9 +1,9 @@
-import {notFound} from "next/navigation";
+import { notFound } from "next/navigation";
 import Topbar from "@/components/Topbar";
 import Workspace from "@/components/Workspace";
 import { graphqlRequest } from "@/app/lib/graphqlClient";
-import type {DBProblem, Problem} from "@/app/utils/types/problem";
-import {problems as localProblems} from "@/app/utils/problems";
+import type { DBProblem, Problem } from "@/app/utils/types/problem";
+import { problems as localProblems } from "@/app/utils/problems";
 
 const problemQuery = `
     query Problem($id: ID!) {
@@ -17,19 +17,20 @@ const problemQuery = `
             order
             videoId
             link
+            userState {solved, attempted, bookmarked, liked}
         }
     }    
 `;
 
 async function loadProblem(id: string): Promise<Problem> {
-    const {data, errors} = await graphqlRequest<{problem: DBProblem | null}>(problemQuery, {id});
+    const { data, errors } = await graphqlRequest<{ problem: DBProblem | null }>(problemQuery, { id });
     if (errors?.length) throw new Error(errors[0].message);
     if (!data?.problem) notFound();
 
     const local = localProblems[id];
     if (!local) notFound();
 
-    const {handlerFunction, ...serializableLocal} = local;
+    const { handlerFunction, ...serializableLocal } = local;
     return {
         ...serializableLocal,
         title: data.problem.title,
@@ -40,11 +41,12 @@ async function loadProblem(id: string): Promise<Problem> {
         videoId: data.problem.videoId ?? undefined,
         link: data.problem.link ?? undefined,
         handlerFunction: typeof handlerFunction === "function" ? handlerFunction.toString() : handlerFunction,
+        userState: data.problem.userState ?? undefined,
     };
 }
 
-export default async function Page({params}: {params: {id: string}}) {
-    const {id} = params;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const problem = await loadProblem(id);
 
     return (

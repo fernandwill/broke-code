@@ -4,7 +4,7 @@ import {Problem} from "../types/problem";
 
 type TwoSumSolver = (nums: number[], target: number) => number[];
 
-const starterCodeTwoSum = `const twoSum = (nums, target) {
+const starterCodeTwoSum = `const twoSum = (nums, target) => {
     // Write your code here
 }`
 

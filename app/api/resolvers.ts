@@ -5,6 +5,14 @@ import jwt from "jsonwebtoken";
 import type { DBProblem } from "@/app/utils/types/problem";
 import {getRedisClient} from "./redis";
 
+type ProblemUserStateRow = {
+    solved: boolean;
+    attempted: boolean;
+    bookmarked: boolean;
+    liked: boolean;
+    disliked: boolean;
+};
+
 type DBerror = { code?: string; message?: string };
 
 type DBProblemRow = {
@@ -137,6 +145,74 @@ export const resolvers = {
             const redis = await getRedisClient();
             if (redis) await redis.del(`user:${context.user.sub}`).catch(() => null);
             return true;
+        },
+        setProblemState: async (
+            _parent: unknown,
+            {problemId, input}: {problemId: string; input: Partial<ProblemUserStateRow>},
+            context: Context
+        ) => {
+            if (!context.user) throw new Error("Not authenticated.");
+            const {solved, attempted, bookmarked, liked, disliked} = input;
+            const existing = await query(
+                "SELECT solved, attempted, bookmarked, liked, disliked FROM problem_user_state WHERE user_id = $1 AND problem_id = $2",
+                [context.user.sub, problemId]
+            );
+
+            const prev: ProblemUserStateRow = existing.rows[0] ?? {
+                solved: false,
+                attempted: false,
+                bookmarked: false,
+                liked: false,
+                disliked: false,
+            };
+
+            const next: ProblemUserStateRow = {
+                solved: solved ?? prev.solved,
+                attempted: attempted ?? prev.attempted,
+                bookmarked: bookmarked ?? prev.bookmarked,
+                liked: liked ?? prev.liked,
+                disliked: disliked ?? prev.disliked,
+            };
+
+            // keep liked/disliked mutually exclusive
+            if (next.liked) next.disliked = false;
+            if (next.disliked) next.liked = false;
+
+            const likesDelta = (next.liked ? 1 : 0) - (prev.liked ? 1 : 0);
+            const dislikesDelta = (next.disliked ? 1 : 0) - (prev.disliked ? 1 : 0);
+
+            const result = await query(
+                `INSERT INTO problem_user_state (user_id, problem_id, solved, attempted, bookmarked, liked, disliked)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7)
+                 ON CONFLICT (user_id, problem_id) DO UPDATE SET
+                    solved = EXCLUDED.solved,
+                    attempted = EXCLUDED.attempted,
+                    bookmarked = EXCLUDED.bookmarked,
+                    liked = EXCLUDED.liked,
+                    disliked = EXCLUDED.disliked,
+                    updated_at = now()
+                 RETURNING solved, attempted, bookmarked, liked, disliked`,
+                [context.user.sub, problemId, next.solved, next.attempted, next.bookmarked, next.liked, next.disliked]
+            );
+
+            if (likesDelta !== 0 || dislikesDelta !== 0) {
+                await query(
+                    "UPDATE problems SET likes = GREATEST(likes + $1, 0), dislikes = GREATEST(dislikes + $2, 0) WHERE id = $3",
+                    [likesDelta, dislikesDelta, problemId]
+                );
+            }
+
+            return result.rows[0];
+        }
+    },
+    Problem: {
+        userState: async (parent: {id: string}, _args: unknown, context: Context): Promise<ProblemUserStateRow | null> => {
+            if (!context.user) return null;
+            const res = await query(
+                "SELECT solved, attempted, bookmarked, liked, disliked FROM problem_user_state WHERE user_id = $1 AND problem_id = $2", [context.user.sub, parent.id]
+            );
+            if (res.rowCount === 0) return {solved: false, attempted: false, bookmarked: false, liked: false, disliked: false};
+            return res.rows[0];
         }
     },
 

@@ -6,6 +6,7 @@ import {AiFillYoutube} from "react-icons/ai";
 import {IoClose} from "react-icons/io5";
 import YouTube from "react-youtube";
 import {graphqlRequest} from "@/app/lib/graphqlClient";
+import {ProblemUserState} from "@/app/utils/types/problem";
 
 type ProblemRow = {
     id: string;
@@ -14,6 +15,7 @@ type ProblemRow = {
     category: string;
     order: number
     videoId?: string | null;
+    userState?: ProblemUserState;
 }
 
 const problemQuery = `
@@ -25,6 +27,7 @@ const problemQuery = `
             category
             order
             videoId
+            userState {solved attempted bookmarked liked}
         }
     }
 `;
@@ -46,7 +49,8 @@ const ProblemTable: React.FC<ProblemTableProps> = () => {
         let cancelled = false;
         const load = async () => {
             try {
-                const {data, errors} = await graphqlRequest<{problems: ProblemRow[]}>(problemQuery);
+                const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+                const {data, errors} = await graphqlRequest<{problems: ProblemRow[]}>(problemQuery, undefined, token ? {token} : undefined);
                 if (errors?.length) throw new Error(errors[0].message);
                 if (!cancelled) {
                     setProblems((data?.problems ?? []).slice().sort((a, b) => a.order - b.order));
@@ -76,11 +80,13 @@ const ProblemTable: React.FC<ProblemTableProps> = () => {
         <tbody className="text-white">
             {problems.map((doc, idx) => {
                 const diffColor = doc.difficulty === "Easy" ? "text-[#2CBB5D]" : doc.difficulty === "Medium" ? "text-[#FFC01E]" : "text-[#FF375F]";
+                const solved = doc.userState?.solved;
+                const statusColor = solved ? "text-[#2CBB5D]" : "text-gray-500";
 
                 return (
                     <tr className={`${idx % 2 == 1 ? "bg-[#282828]" : ""}`} key={doc.id}>
                     <th className="px-2 py-4 font-medium whitespace-nowrap text-[#2CBB5D]">
-                        <BsCheckCircle fontSize={"18"} width="18" />
+                        <BsCheckCircle fontSize={"18"} width="18" className={statusColor}/>
                     </th>
                         <td className="px-6 py-4">
                         <Link className="hover:text-blue-600 cursor-pointer" href={`/problems/${doc.id}`}>{doc.title}</Link>

@@ -24,6 +24,7 @@ export const typeDefs = gql`
         createUser(email: String!, name: String!, password: String!): User!
         userLogin(email: String!, password: String!): AuthPayload!
         logout: Boolean!
+        setProblemState(problemId: ID!, input: ProblemStateInput!): ProblemUserState!
     }
 
     type Subscription {
@@ -40,5 +41,22 @@ export const typeDefs = gql`
     order: Int!
     videoId: String
     link: String
+    userState: ProblemUserState
+    }
+
+    type ProblemUserState {
+    solved: Boolean!
+    attempted: Boolean!
+    bookmarked: Boolean!
+    liked: Boolean!
+    disliked: Boolean!
+    }
+
+    input ProblemStateInput {
+    solved: Boolean
+    attempted: Boolean
+    bookmarked: Boolean
+    liked: Boolean
+    disliked: Boolean 
     }
 `;
