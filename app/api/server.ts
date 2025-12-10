@@ -5,7 +5,7 @@ import express, { Request } from "express";
 import { json } from "body-parser";
 import { ApolloServer } from "@apollo/server";
 import { WebSocketServer } from "ws";
-import { expressMiddleware } from "@as-integrations/express4";
+import { expressMiddleware } from "@as-integrations/express5";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { useServer } from "graphql-ws/use/ws";
 import { makeExecutableSchema } from "@graphql-tools/schema";

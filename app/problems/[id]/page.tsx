@@ -43,8 +43,8 @@ async function loadProblem(id: string): Promise<Problem> {
     };
 }
 
-export default async function Page({params}: {params: Promise<{id: string}>}) {
-    const {id} = await params;
+export default async function Page({params}: {params: {id: string}}) {
+    const {id} = params;
     const problem = await loadProblem(id);
 
     return (

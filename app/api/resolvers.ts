@@ -3,6 +3,7 @@ import { Context } from "./context";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { DBProblem } from "@/app/utils/types/problem";
+import {getRedisClient} from "./redis";
 
 type DBerror = { code?: string; message?: string };
 
@@ -47,12 +48,26 @@ export const resolvers = {
         me: async (_parent: unknown, _args: unknown, context: Context) => {
             if (!context.user) throw new Error("Not authenticated.");
 
+            const redis = await getRedisClient();
+            const cacheKey = `user:${context.user.sub}`;
+
+            if (redis) {
+                const cached = await redis.get(cacheKey).catch(() => null);
+                if (cached) return JSON.parse(cached);
+            }
+
             const result = await query(
                 "SELECT * FROM users WHERE id = $1",
                 [context.user.sub]
             );
 
-            return result.rows[0];
+            const user = result.rows[0];
+
+            if (redis && user) {
+                await redis.set(cacheKey, JSON.stringify(user), {EX: 300}).catch(() => null);
+            }
+
+            return user;
         },
 
         problems: async (): Promise<DBProblem[]> => {
@@ -74,7 +89,14 @@ export const resolvers = {
                     "INSERT INTO users (email, name, password_hash) VALUES ($1, $2, $3) RETURNING id, email, name",
                     [email, name, hashedPassword]
                 );
-                return result.rows[0];
+                const user = result.rows[0];
+
+                const redis = await getRedisClient();
+                if (redis) {
+                    await redis.set(`user:${user.id}`, JSON.stringify(user), {EX: 300}).catch(() => null);
+                }
+
+                return user;
             } catch (err: unknown) {
                 if (isDBError(err) && err.code === "23505") {
                     throw new Error("User already exists.");
@@ -91,6 +113,12 @@ export const resolvers = {
                     [email]
                 );
                 const user = result.rows[0];
+
+                const redis = await getRedisClient();
+                if (redis && user) {
+                    await redis.set(`user:${user.id}`, JSON.stringify({id: user.id, email: user.email, name: user.name}), {EX: 300}).catch(() => null);
+                }
+
                 if (!user) throw new Error("Invalid email or password.");
 
                 const passwordValid = await bcrypt.compare(password, user.password_hash);
@@ -103,6 +131,12 @@ export const resolvers = {
                 const message = err instanceof Error ? err.message.trim() : "Login failed.";
                 throw new Error(message);
             }
+        },
+        logout: async (_: unknown, __: unknown, context: Context) => {
+            if (!context.user) throw new Error("Not authenticated.");
+            const redis = await getRedisClient();
+            if (redis) await redis.del(`user:${context.user.sub}`).catch(() => null);
+            return true;
         }
     },
 
